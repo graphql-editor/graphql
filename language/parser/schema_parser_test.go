@@ -74,7 +74,7 @@ type Hello {
 	}
 }
 
-func TestSchemaParser_SimpleExtension(t *testing.T) {
+func TestSchemaParser_SimpleTypeExtension(t *testing.T) {
 
 	body := `
 extend type Hello {
@@ -84,7 +84,7 @@ extend type Hello {
 	expected := ast.NewDocument(&ast.Document{
 		Loc: testLoc(1, 38),
 		Definitions: []ast.Node{
-			ast.NewTypeExtensionDefinition(&ast.TypeExtensionDefinition{
+			ast.NewObjectExtensionDefinition(&ast.ObjectExtensionDefinition{
 				Loc: testLoc(1, 38),
 				Definition: ast.NewObjectDefinition(&ast.ObjectDefinition{
 					Loc: testLoc(8, 38),
@@ -388,6 +388,51 @@ interface Hello {
 	}
 }
 
+func TestSchemaParser_SimpleInterfaceExtension(t *testing.T) {
+	body := `
+extend interface Hello {
+  world: String
+}`
+	astDoc := parse(t, body)
+	expected := ast.NewDocument(&ast.Document{
+		Loc: testLoc(1, 43),
+		Definitions: []ast.Node{
+			ast.NewInterfaceExtensionDefinition(&ast.InterfaceExtensionDefinition{
+				Loc: testLoc(1, 43),
+				Definition: ast.NewInterfaceDefinition(&ast.InterfaceDefinition{
+					Loc: testLoc(8, 43),
+					Name: ast.NewName(&ast.Name{
+						Value: "Hello",
+						Loc:   testLoc(18, 23),
+					}),
+					Directives: []*ast.Directive{},
+					Fields: []*ast.FieldDefinition{
+						ast.NewFieldDefinition(&ast.FieldDefinition{
+							Loc: testLoc(28, 41),
+							Name: ast.NewName(&ast.Name{
+								Value: "world",
+								Loc:   testLoc(28, 33),
+							}),
+							Directives: []*ast.Directive{},
+							Arguments:  []*ast.InputValueDefinition{},
+							Type: ast.NewNamed(&ast.Named{
+								Loc: testLoc(35, 41),
+								Name: ast.NewName(&ast.Name{
+									Value: "String",
+									Loc:   testLoc(35, 41),
+								}),
+							}),
+						}),
+					},
+				}),
+			}),
+		},
+	})
+	if !reflect.DeepEqual(astDoc, expected) {
+		t.Fatalf("unexpected document, expected: %v, got: %v", expected, astDoc)
+	}
+}
+
 func TestSchemaParser_SimpleFieldWithArg(t *testing.T) {
 	body := `
 type Hello {
@@ -680,6 +725,39 @@ func TestSchemaParser_SimpleUnion(t *testing.T) {
 	}
 }
 
+func TestSchemaParser_SimpleUnionExtension(t *testing.T) {
+	body := `extend union Hello = World`
+	astDoc := parse(t, body)
+	expected := ast.NewDocument(&ast.Document{
+		Loc: testLoc(0, 26),
+		Definitions: []ast.Node{
+			ast.NewUnionExtensionDefinition(&ast.UnionExtensionDefinition{
+				Loc: testLoc(0, 26),
+				Definition: ast.NewUnionDefinition(&ast.UnionDefinition{
+					Loc: testLoc(7, 26),
+					Name: ast.NewName(&ast.Name{
+						Value: "Hello",
+						Loc:   testLoc(13, 18),
+					}),
+					Directives: []*ast.Directive{},
+					Types: []*ast.Named{
+						ast.NewNamed(&ast.Named{
+							Loc: testLoc(21, 26),
+							Name: ast.NewName(&ast.Name{
+								Value: "World",
+								Loc:   testLoc(21, 26),
+							}),
+						}),
+					},
+				}),
+			}),
+		},
+	})
+	if !reflect.DeepEqual(astDoc, expected) {
+		t.Fatalf("unexpected document, expected: %v, got: %v", expected, astDoc)
+	}
+}
+
 func TestSchemaParser_UnionWithTwoTypes(t *testing.T) {
 	body := `union Hello = Wo | Rld`
 	astDoc := parse(t, body)
@@ -738,6 +816,39 @@ func TestSchemaParser_Scalar(t *testing.T) {
 	}
 }
 
+func TestSchemaParser_ScalarExtension(t *testing.T) {
+	body := `extend scalar Hello @dir`
+	astDoc := parse(t, body)
+	expected := ast.NewDocument(&ast.Document{
+		Loc: testLoc(0, 24),
+		Definitions: []ast.Node{
+			ast.NewScalarExtensionDefinition(&ast.ScalarExtensionDefinition{
+				Loc: testLoc(0, 24),
+				Definition: ast.NewScalarDefinition(&ast.ScalarDefinition{
+					Loc: testLoc(7, 24),
+					Name: ast.NewName(&ast.Name{
+						Value: "Hello",
+						Loc:   testLoc(14, 19),
+					}),
+					Directives: []*ast.Directive{
+						ast.NewDirective(&ast.Directive{
+							Arguments: []*ast.Argument{},
+							Loc:       testLoc(20, 24),
+							Name: ast.NewName(&ast.Name{
+								Loc:   testLoc(21, 24),
+								Value: "dir",
+							}),
+						}),
+					},
+				}),
+			}),
+		},
+	})
+	if !reflect.DeepEqual(astDoc, expected) {
+		t.Fatalf("unexpected document, expected: %v, got: %v", expected, astDoc)
+	}
+}
+
 func TestSchemaParser_SimpleInputObject(t *testing.T) {
 	body := `
 input Hello {
@@ -772,6 +883,51 @@ input Hello {
 						Directives:   []*ast.Directive{},
 					}),
 				},
+			}),
+		},
+	})
+	if !reflect.DeepEqual(astDoc, expected) {
+		t.Fatalf("unexpected document, expected: %v, got: %v", expected, astDoc)
+	}
+}
+
+func TestSchemaParser_SimpleInputObjectExtension(t *testing.T) {
+	body := `
+extend input Hello {
+  world: String
+}`
+	astDoc := parse(t, body)
+	expected := ast.NewDocument(&ast.Document{
+		Loc: testLoc(1, 39),
+		Definitions: []ast.Node{
+			ast.NewInputObjectExtensionDefinition(&ast.InputObjectExtensionDefinition{
+				Loc: testLoc(1, 39),
+				Definition: ast.NewInputObjectDefinition(&ast.InputObjectDefinition{
+					Loc: testLoc(8, 39),
+					Name: ast.NewName(&ast.Name{
+						Value: "Hello",
+						Loc:   testLoc(14, 19),
+					}),
+					Directives: []*ast.Directive{},
+					Fields: []*ast.InputValueDefinition{
+						ast.NewInputValueDefinition(&ast.InputValueDefinition{
+							Loc: testLoc(24, 37),
+							Name: ast.NewName(&ast.Name{
+								Value: "world",
+								Loc:   testLoc(24, 29),
+							}),
+							Type: ast.NewNamed(&ast.Named{
+								Loc: testLoc(31, 37),
+								Name: ast.NewName(&ast.Name{
+									Value: "String",
+									Loc:   testLoc(31, 37),
+								}),
+							}),
+							DefaultValue: nil,
+							Directives:   []*ast.Directive{},
+						}),
+					},
+				}),
 			}),
 		},
 	})
