@@ -51,8 +51,14 @@ const (
 	EnumValueDefinition   = "EnumValueDefinition"
 	InputObjectDefinition = "InputObjectDefinition" // previously InputObjectTypeDefinition
 
-	// Types Extensions
-	TypeExtensionDefinition = "TypeExtensionDefinition"
+	// System Extensions
+	SchemaExtensionDefinition      = "SchemaExtensionDefinition"
+	ScalarExtensionDefinition      = "ScalarExtensionDefinition"
+	ObjectExtensionDefinition      = "ObjectExtensionDefinition"
+	InterfaceExtensionDefinition   = "InterfaceExtensionDefinition"
+	UnionExtensionDefinition       = "UnionExtensionDefinition"
+	EnumExtensionDefinition        = "EnumExtensionDefinition"
+	InputObjectExtensionDefinition = "InputObjectExtensionDefinition"
 
 	// Directive Definitions
 	DirectiveDefinition = "DirectiveDefinition"
