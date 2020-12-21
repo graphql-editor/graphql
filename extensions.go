@@ -50,7 +50,7 @@ type Extension interface {
 	ResolveFieldDidStart(context.Context, *ResolveInfo) (context.Context, ResolveFieldFinishFunc)
 
 	// HasResult returns if the extension wants to add data to the result
-	HasResult() bool
+	HasResult(context.Context) bool
 
 	// GetResult returns the data that the extension wants to add to the result
 	GetResult(context.Context) interface{}
@@ -239,7 +239,7 @@ func addExtensionResults(p *ExecuteParams, result *Result) {
 						result.Errors = append(result.Errors, gqlerrors.FormatError(fmt.Errorf("%s.GetResult: %v", ext.Name(), r.(error))))
 					}
 				}()
-				if ext.HasResult() {
+				if ext.HasResult(p.Context) {
 					if result.Extensions == nil {
 						result.Extensions = make(map[string]interface{})
 					}
